@@ -3,7 +3,6 @@ import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 
-
 const openSans = Open_Sans({
   variable: "--font-open-sans",
   subsets: ["latin"],
@@ -21,10 +20,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${openSans.variable} antialiased`}
-      >
-        <Navbar/>
+      <body className={`${openSans.variable} antialiased`}>
+        <Navbar />
         {children}
       </body>
     </html>
