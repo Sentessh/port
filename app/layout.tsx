@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
+import SmoothScroll from "./components/SmoothScroll";
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
@@ -22,7 +23,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${openSans.variable} antialiased`}>
         <Navbar />
-        {children}
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

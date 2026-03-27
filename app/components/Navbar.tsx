@@ -10,7 +10,6 @@ export default function Navbar() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Force visibility at the top of the page
       if (currentScrollY <= 0) {
         setVisible(true);
         lastScrollY.current = currentScrollY;
@@ -19,10 +18,9 @@ export default function Navbar() {
 
       const diff = currentScrollY - lastScrollY.current;
 
-      // Threshold to prevent over-sensitivity
       if (diff < -10) {
         setVisible(true);
-      } else if (diff > 10) {
+      } else if (diff > 3) {
         setVisible(false);
       }
 
