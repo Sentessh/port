@@ -59,3 +59,12 @@ button:active::after {
   transform: scale(3);
   opacity: 0;
 }
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee {
+  animation: marquee 10s linear infinite;
+}
