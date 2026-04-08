@@ -2,12 +2,51 @@
 import { motion, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import emailjs from "@emailjs/browser";
 import Marquee from "./components/Marquee";
+import Navbar from "./components/Navbar";
 
 export default function Home() {
   const { scrollY } = useScroll();
   const[scrolled, setScrolled] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
+
+  const [contactForm, setContactForm] = useState({ name: "", email: "", title: "", message: "" });
+  const [contactStatus, setContactStatus] = useState<"idle" | "sending" | "sent" | "error" | "limited">("idle");
+
+  async function handleContact(e: React.FormEvent) {
+    e.preventDefault();
+    setContactStatus("sending");
+
+    const ipRes = await fetch("https://api.ipify.org?format=json");
+    const { ip } = await ipRes.json();
+
+    const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
+    const { data: existing } = await supabase
+      .from("contact_submissions")
+      .select("id")
+      .eq("ip", ip)
+      .gte("created_at", sixHoursAgo);
+
+    if (existing && existing.length > 0) {
+      setContactStatus("limited");
+      return;
+    }
+
+    try {
+      await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        { name: contactForm.name, email: contactForm.email, title: contactForm.title, message: contactForm.message },
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+      );
+      await supabase.from("contact_submissions").insert({ ip });
+      setContactStatus("sent");
+      setContactForm({ name: "", email: "", title: "", message: "" });
+    } catch {
+      setContactStatus("error");
+    }
+  }
 
   useEffect(() => {
     return scrollY.on("change", (latest) => {
@@ -17,7 +56,7 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchProject(){
-      const { data } = await supabase.from("projects").select("*");
+      const { data } = await supabase.from("projects").select("*").order("order");
       if (data){
         setProjects(data);
       }
@@ -27,6 +66,7 @@ export default function Home() {
 
   return(
     <main className="overflow-visible">
+      <Navbar />
 
       <motion.section animate={{
         scale : scrolled ? 0.8 : 1,
@@ -52,7 +92,7 @@ export default function Home() {
       </motion.section>
 
       <motion.section
-        className="bg-[#111111] rounded-2xl p-10 pb-10 mx-[186px] mt-4 shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
+        className="bg-[#111111] rounded-2xl p-10 pb-10 mx-[186px] mt-4 mb-25 shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
         initial={{ opacity: 0, scale: 1.05 }}
         whileInView={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
@@ -80,7 +120,68 @@ export default function Home() {
         ))}
       </motion.section>
 
-      <div className="h-screen"></div>
+      <motion.section
+        id="contact"
+        className="bg-[#111111] rounded-2xl p-10 mx-[186px] mt-4 mb-25 shadow-[0_20px_60px_rgba(0,0,0,0.6)] flex gap-10"
+        initial={{ opacity: 0, scale: 1.05 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        viewport={{ once: true, amount: 0.3 }}
+        whileHover={{ scale: 1.02 }}
+      >
+        <div className="w-1/2 flex flex-col justify-center gap-4">
+          <h2 className="text-4xl font-bold">Let's Talk!</h2>
+          <p className="text-white/50 text-lg">Fill out the form to get in touch.</p>
+        </div>
+
+        <form onSubmit={handleContact} className="w-1/2 flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Name"
+            required
+            value={contactForm.name}
+            onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+            className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:border-purple-500 outline-none transition-colors"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            required
+            value={contactForm.email}
+            onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+            className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:border-purple-500 outline-none transition-colors"
+          />
+          <input
+            type="text"
+            placeholder="Reason for Contact"
+            required
+            value={contactForm.title}
+            onChange={(e) => setContactForm({ ...contactForm, title: e.target.value })}
+            className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:border-purple-500 outline-none transition-colors"
+          />
+          <textarea
+            placeholder="Message"
+            required
+            rows={4}
+            value={contactForm.message}
+            onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+            className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:border-purple-500 outline-none transition-colors resize-none"
+          />
+          <button
+            type="submit"
+            disabled={contactStatus === "sending" || contactStatus === "sent"}
+            className="bg-purple-500 px-6 py-3 rounded-lg font-bold hover:bg-purple-600 transition-colors disabled:opacity-50"
+          >
+            {contactStatus === "sending" ? "Sending..." : contactStatus === "sent" ? "Message Sent!" : "Send Message"}
+          </button>
+          {contactStatus === "limited" && (
+            <p className="text-red-400 text-sm text-center">You can only send one message every 6 hours.</p>
+          )}
+          {contactStatus === "error" && (
+            <p className="text-red-400 text-sm text-center">Something went wrong. Please try again.</p>
+          )}
+        </form>
+      </motion.section>
     </main>
   );
 }

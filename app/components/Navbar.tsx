@@ -38,9 +38,9 @@ export default function Navbar() {
       }`}
     >
       <nav className="flex justify-between items-center">
-        <div className="flex font-bold leading-none text-xl">
+        <a href="/" className="flex font-bold leading-none text-xl hover:text-white/70 transition-colors">
           BDev
-        </div>
+        </a>
 
         <div className="flex gap-[15px] font-bold leading-none">
           <a className="inline-flex items-center gap-1" href="#aboutMe">

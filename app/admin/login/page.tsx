@@ -31,7 +31,7 @@ export default function LoginPage() {
       <form
         onSubmit={handleLogin}
         tabIndex={-1}
-        className="flex flex-col bg-white/5 backdrop-blur-md border-2 border-purple-500/30 rounded-lg px-10 py-20 w-full max-w-[400] hover:scale-105 transition-transform duration-300"
+        className="flex flex-col bg-white/5 backdrop-blur-md border-2 border-purple-500/30 rounded-lg px-10 py-20 w-full max-w-[400px] hover:scale-105 transition-transform duration-300"
         style={{ boxShadow: "0 0 10px #a855f7, 0 0 20px #a855f7" }}>
           <h1 className="text-center text-white text-2xl font-bold mb-6">Login</h1>
         <input

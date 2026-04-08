@@ -23,7 +23,7 @@ export default function Marquee({ items }: { items: string[] }) {
     let animationId: number;
 
     function animate() {
-      x.current -= 2;
+      x.current -= 1.5;
 
       if (containerRef.current && singleRef.current) {
         const singleWidth = singleRef.current.offsetWidth;
