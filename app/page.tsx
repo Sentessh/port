@@ -74,21 +74,30 @@ export default function Home() {
       }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
       className="h-screen px-1 py-1 bg-[#111111] flex flex-col items-center justify-center relative overflow-hidden">
-        <h1>Lorem ipsum dolor sit amet</h1>
-        <h2>Lorem ipsum dolor sit amet</h2>
-        <p>Lorem ipsum dolor sit amet</p>
+        <h1 className="font-bold text-[64px]">Hello, my name is Bernardo!</h1>
+        <h2 className="text-2xl">And here you'll be able to see some of my work!</h2>
         <Marquee items={["Api Development", "FrontEnd", "BackEnd", "Data Analytics", "AI"]} />
       </motion.section>
 
       <motion.section
-        className="bg-[#111111] rounded-2xl p-10 h-[70vh] mx-[186px] mt-4 mb-25 shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
+        className="bg-[#111111] rounded-2xl p-10 h-[70vh] mx-[186px] mt-4 mb-25 shadow-[0_20px_60px_rgba(0,0,0,0.6)] flex gap-10"
         initial={{ opacity: 0, scale: 1.05 }}
         whileInView={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
         whileHover={{ scale: 1.02 }}
       >
-        <p>Lorem ipsum dolor sit amet</p>
+        <div className="w-1/2 h-full flex items-center justify-center">
+          <img
+            src="https://jxxnwnoikngatnldtzry.supabase.co/storage/v1/object/public/profile-pic/me.png"
+            alt="Bernardo"
+            className="w-[70%] h-[70%] object-cover rounded-xl"
+          />
+        </div>
+        <div className="w-1/2 flex flex-col justify-center gap-4">
+          <h1 className="text-2xl font-bold">About Me!</h1>
+          <p className="text-justify pr-10">Hello! I'm Bernardo, a Computer Science student at UFSJ. I'm a versatile developer who enjoys tackling diverse challenges across the tech stack. My primary toolkit includes Python, C/C++, C#, Java, and web development. Outside of my academic and corporate leadership roles, I'm an active creator—currently developing a 2D game in Unity. I love blending leadership, technical problem-solving, and continuous learning to build great software.</p>
+        </div>
       </motion.section>
 
       <motion.section
